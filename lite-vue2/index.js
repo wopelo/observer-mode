@@ -1,22 +1,28 @@
-const app = new Iue({
-  data: {
-    msg: 'hello',
-  },
-  computed: {
-    capitalMsg() {
-      return 
+import Vue from './src/vue.js'
+
+const App = new Vue({
+  el: '#app',
+  data() {
+    return {
+      name: '特朗普',
+      info: {
+        message: '没有人比他更懂',
+      },
     }
   },
-  watch: {
-    msg(newValue, oldValue) {
-      console.log(`监听到msg从${oldValue}设为${newValue}`)
-    },
-  },
-  methods: {
-    setMs (value) {
-      this.msg = value
-    }
-  },
+  render(createElement) {
+    return createElement(
+      'div',
+      [
+        createElement('span', `${this._data.name} 说: ${this._data.info.message}`)
+      ]
+    )
+  }
 })
 
-app.setMs('world')
+setTimeout(() => {
+  App._data.name = '川宝'
+  App._data.info.message = 'MAGA'
+  
+  console.log('App._data.info.message: ', App._data.info.message)
+}, 2000)

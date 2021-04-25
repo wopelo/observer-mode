@@ -1,9 +1,25 @@
-class Watcher {
-  constructor(cb) {
-    this.cb = cb
+import Dep from './dep.js'
+
+class Watcher{
+  constructor(value, getter) {
+    this.getter = getter
+    this.value = this.get()
+    this.val = value
   }
 
-  update(newValue, oldValue) {
-    this.cb(newValue, oldValue)
+  get() {
+    Dep.depTarget = this
+
+    this.getter()
+
+    Dep.depTarget = null
+
+    return this.val
+  }
+
+  update() {
+    this.value = this.get()
   }
 }
+
+export default Watcher

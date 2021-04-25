@@ -1,36 +1,44 @@
-const Dep = require('./dep')
+import Dep from './dep.js'
 
-class Observer {
-  constructor({ data, watch, methods }) {
-    this.data = data
-    this.watch = watch
-    this.methods = methods
+const typeTo = (val) => Object.prototype.toString.call(val)
 
-    this.defineReactive()
-  }
+function defineReactive(obj, key, val) {
+  // 每个对象的属性都有一个 Dep，用来存放依赖的该属性的函数
+  let dep = new Dep()
 
-  defineReactive(obj) {
-    const keys = Object.keys(obj)
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get() {
+      dep.addSub(Dep.depTarget)
 
-    for (let i = 0; i < keys.length; i++) {
-      const dep = new Dep()
-      const oldValue = obj[keys[i]]
+      return val
+    },
+    set(newValue) {
+      if (newValue === val) return
       
-      Object.defineProperty(obj, key, {
-        enumerable: true,
-        configurable: true,
-        get() {
-          return oldValue
-        },
-        set(newValue) {
-          if (newValue === oldValue) {
-            return
-          }
-
-          oldValue = newValue
-          dep.notify()
-        },
-      })
-    }
-  }
+      val = newValue
+      dep.notify()
+    },
+  })
 }
+
+function walk(obj) {
+  Object.keys(obj).forEach((key) => {
+    if(typeTo(obj[key]) === '[object Object]'){
+      walk(obj[key])
+    }
+
+    defineReactive(obj, key, obj[key])
+  })
+}
+
+function observe(obj){
+  if(typeTo(obj) !== '[object Object]') {
+    return null
+  }
+
+  walk(obj)
+}
+
+export default observe

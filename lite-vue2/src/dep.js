@@ -1,15 +1,21 @@
-class Dep {
-  constructor() {
-    this.watchers = []
+class Dep{
+  constructor(){
+    this.subs = []
   }
 
-  // 添加订阅方法
-  depend(watcher) {
-    this.watchers.push(watcher)
+  addSub(sub) {
+    if(sub && (this.subs.indexOf(sub) === -1)) {
+      this.subs.push(sub)
+    }
   }
 
-  // 发布者更新消息，触发所有的订阅方法
-  notify(newValue, oldValue) {
-    this.watchers.forEach((watcher) => watcher.update(newValue, oldValue))
+  notify() {
+    this.subs.length > 0 && this.subs.forEach((sub) => {
+      sub.update()
+    })
   }
 }
+
+Dep.depTarget = null
+
+export default Dep
