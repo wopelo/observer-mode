@@ -8,11 +8,15 @@ class Vue {
     this.render = options.render
     this.$el = typeof options.el === 'string' ? document.querySelector(options.el) : options.el
 
+    console.log('observe before', Object.getOwnPropertyDescriptor(this._data, 'name'))
+
     observe(this._data)
 
-    new Watcher(this._data, ()=> {
-      this.$mount()
-    })
+    console.log('observe after', Object.getOwnPropertyDescriptor(this._data, 'name'))
+
+    // new Watcher(this._data, ()=> {
+    //   this.$mount()
+    // })
   }
 
   createElement(tagName, children) {

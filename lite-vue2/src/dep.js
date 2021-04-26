@@ -10,6 +10,7 @@ class Dep{
   }
 
   notify() {
+    console.log('通知变更', this.subs.length)
     this.subs.length > 0 && this.subs.forEach((sub) => {
       sub.update()
     })

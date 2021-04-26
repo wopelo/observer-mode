@@ -8,6 +8,7 @@ class Watcher{
   }
 
   get() {
+    console.log('设置Dep.depTarget', JSON.parse(JSON.stringify(this)))
     Dep.depTarget = this
 
     this.getter()

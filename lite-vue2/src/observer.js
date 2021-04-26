@@ -10,13 +10,16 @@ function defineReactive(obj, key, val) {
     enumerable: true,
     configurable: true,
     get() {
+      console.log(`get ${key}`)
       dep.addSub(Dep.depTarget)
 
       return val
     },
     set(newValue) {
+      console.log(`set ${key}`)
+
       if (newValue === val) return
-      
+
       val = newValue
       dep.notify()
     },
@@ -25,10 +28,12 @@ function defineReactive(obj, key, val) {
 
 function walk(obj) {
   Object.keys(obj).forEach((key) => {
+    // 如果值是对象，继续处理对象内部的字段
     if(typeTo(obj[key]) === '[object Object]'){
       walk(obj[key])
     }
 
+    // 处理对象本身
     defineReactive(obj, key, obj[key])
   })
 }
