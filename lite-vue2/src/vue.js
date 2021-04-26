@@ -14,9 +14,11 @@ class Vue {
 
     console.log('observe after', Object.getOwnPropertyDescriptor(this._data, 'name'))
 
-    // new Watcher(this._data, ()=> {
-    //   this.$mount()
-    // })
+    // 创建一个订阅者，订阅_data的变更
+    // 订阅者收到变更通知时重新渲染组件
+    new Watcher(this._data, ()=> {
+      this.$mount()
+    })
   }
 
   createElement(tagName, children) {

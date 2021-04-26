@@ -22,7 +22,7 @@ const App = new Vue({
 
 setTimeout(() => {
   App._data.name = '川宝'
-  App._data.info.message = 'MAGA'
+  // App._data.info.message = 'MAGA'
 
   // console.log('App._data.info.message: ', App._data.info.message)
 }, 2000)

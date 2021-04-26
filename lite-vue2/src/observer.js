@@ -2,19 +2,27 @@ import Dep from './dep.js'
 
 const typeTo = (val) => Object.prototype.toString.call(val)
 
+// 重写属性get/set方法
 function defineReactive(obj, key, val) {
-  // 每个对象的属性都有一个 Dep，用来存放依赖的该属性的函数
+  // 每个对象的属性都有一个 Dep 作为该属性变更的发布平台
   let dep = new Dep()
 
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
+    // get时发布平台收集订阅者
     get() {
       console.log(`get ${key}`)
+
+      if (Dep.depTarget && Dep.depTarget.id >= 0) {
+        console.log(`当前订阅者id: ${Dep.depTarget.id}`)
+      }
+
       dep.addSub(Dep.depTarget)
 
       return val
     },
+    // set时发布平台dep通知订阅者
     set(newValue) {
       console.log(`set ${key}`)
 
@@ -38,6 +46,7 @@ function walk(obj) {
   })
 }
 
+// observe用于劫持数据
 function observe(obj){
   if(typeTo(obj) !== '[object Object]') {
     return null

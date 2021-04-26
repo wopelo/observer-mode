@@ -1,5 +1,7 @@
+// 发布订阅模型中的发布平台
 class Dep{
-  constructor(){
+  constructor() {
+    // 订阅者列表
     this.subs = []
   }
 
