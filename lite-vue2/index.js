@@ -33,3 +33,26 @@ setTimeout(() => {
   // console.log('App._data.info.message: ', App._data.info.message)
 }, 4000)
 
+const Sub = new Vue({
+  el: '#sub',
+  data() {
+    return {
+      name: '拜登',
+      info: {
+        message: '睡着了',
+      },
+    }
+  },
+  render(createElement) {
+    return createElement(
+      'div',
+      [
+        createElement('span', `${this._data.name} 在飞机上 ${this._data.info.message}`)
+      ]
+    )
+  }
+})
+
+setTimeout(() => {
+  Sub._data.info.message = '摔了一跤'
+}, 3000)
