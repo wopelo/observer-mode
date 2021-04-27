@@ -1,40 +1,36 @@
+// 使用proxy api做数据劫持
 import Dep from './dep.js'
 
 const typeTo = (val) => Object.prototype.toString.call(val)
 
 // 重写属性get/set方法
-function defineReactive(obj, key, val) {
+function defineReactive(obj) {
   // 每个对象的属性都有一个 Dep 作为该属性变更的发布平台
   let dep = new Dep()
 
-  Object.defineProperty(obj, key, {
-    enumerable: true,
-    configurable: true,
-    // get时发布平台收集订阅者
-    get() {
-      console.log(`get ${key}`)
+  if (typeTo(obj) !== '[object Object]') {
+      return null
+  }
 
-      if (Dep.depTarget && Dep.depTarget.id >= 0) {
-        console.log(`当前订阅者id: ${Dep.depTarget.id}`)
-      }
-
+  return new Proxy(obj, {
+    get(target, key) {
       dep.addSub(Dep.depTarget)
 
-      return val
+      return target[key]
     },
-    // set时发布平台dep通知订阅者
-    set(newValue) {
-      console.log(`set ${key}`)
+    set(target, key, value, receiver) {
+      let newValue = Reflect.set(target, key, value, receiver)
 
-      if (newValue === val) return
-
-      val = newValue
       dep.notify()
-    },
+
+      return newValue
+    }
   })
 }
 
 function walk(obj) {
+  const res = {}
+
   Object.keys(obj).forEach((key) => {
     // 如果值是对象，继续处理对象内部的字段
     if(typeTo(obj[key]) === '[object Object]'){
@@ -42,8 +38,10 @@ function walk(obj) {
     }
 
     // 处理属性本身
-    defineReactive(obj, key, obj[key])
+    res[key] = defineReactive(obj[key])
   })
+
+  return res
 }
 
 // observe用于劫持数据
@@ -52,7 +50,7 @@ function observe(obj) {
     return null
   }
 
-  walk(obj)
+  return walk(obj)
 }
 
 export default observe
