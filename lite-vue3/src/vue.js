@@ -8,15 +8,11 @@ class Vue {
     this.render = options.render
     this.$el = typeof options.el === 'string' ? document.querySelector(options.el) : options.el
 
-    console.log('observe before', Object.getOwnPropertyDescriptor(this._data, 'name'))
-
     this.$data = observe(this._data)
-
-    console.log('observe after', Object.getOwnPropertyDescriptor(this._data, 'name'))
 
     // 创建一个订阅者，订阅_data的变更
     // 订阅者收到变更通知时重新渲染组件
-    new Watcher(this._data, ()=> {
+    new Watcher(this.$data, ()=> {
       this.$mount()
     })
   }

@@ -14,16 +14,20 @@ function defineReactive(obj) {
 
   return new Proxy(obj, {
     get(target, key) {
+      console.log('触发get', target, key)
+
       dep.addSub(Dep.depTarget)
 
       return target[key]
     },
     set(target, key, value, receiver) {
+      console.log('触发set', target, key, value)
+
       let newValue = Reflect.set(target, key, value, receiver)
 
       dep.notify()
 
-      return newValue
+      return true
     }
   })
 }
@@ -32,16 +36,16 @@ function walk(obj) {
   const res = {}
 
   Object.keys(obj).forEach((key) => {
-    // 如果值是对象，继续处理对象内部的字段
-    if(typeTo(obj[key]) === '[object Object]'){
-      walk(obj[key])
+    if (typeTo(obj[key]) === '[object Object]') {
+      // 如果值是对象，继续处理对象内部的字段
+      res[key] = walk(obj[key])
+    } else {
+      // 如果不是对象，则赋值
+      res[key] = obj[key]
     }
-
-    // 处理属性本身
-    res[key] = defineReactive(obj[key])
   })
 
-  return res
+  return defineReactive(res)
 }
 
 // observe用于劫持数据
